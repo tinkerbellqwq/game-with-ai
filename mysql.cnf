@@ -1,0 +1,34 @@
+# MySQL configuration optimized for 2C2G server
+[mysqld]
+# Memory settings for 2C2G environment
+innodb_buffer_pool_size = 256M
+innodb_log_file_size = 32M
+innodb_log_buffer_size = 8M
+key_buffer_size = 32M
+query_cache_size = 16M
+tmp_table_size = 16M
+max_heap_table_size = 16M
+
+# Connection settings
+max_connections = 50
+max_user_connections = 40
+connect_timeout = 10
+wait_timeout = 600
+interactive_timeout = 600
+
+# Performance settings
+innodb_flush_log_at_trx_commit = 2
+innodb_flush_method = O_DIRECT
+innodb_file_per_table = 1
+innodb_read_io_threads = 2
+innodb_write_io_threads = 2
+
+# Character set
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+
+# Disable performance schema to save memory
+performance_schema = OFF
+
+# Binary logging (disable for development to save space)
+skip-log-bin
