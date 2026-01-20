@@ -1,81 +1,60 @@
 # MySQL配置文件 - 针对2C2G服务器环境优化
-# MySQL Configuration for 2C2G Server Environment
+# MySQL 8.0 Configuration for 2C2G Server Environment
 # 内存限制: 2GB, CPU: 2核心
 
 [mysqld]
 # 基本设置
 port = 3306
-bind-address = 127.0.0.1
+bind-address = 0.0.0.0
 socket = /var/run/mysqld/mysqld.sock
 
 # 字符集设置
 character-set-server = utf8mb4
 collation-server = utf8mb4_unicode_ci
-init-connect = 'SET NAMES utf8mb4'
 
 # 内存优化设置 (针对2GB内存)
 # InnoDB缓冲池 - 设置为可用内存的50-70%
-innodb_buffer_pool_size = 512M
+innodb_buffer_pool_size = 256M
 innodb_buffer_pool_instances = 1
 
 # 连接设置
-max_connections = 50  # 限制连接数以节省内存
+max_connections = 50
 max_connect_errors = 10
 connect_timeout = 10
 wait_timeout = 600
 interactive_timeout = 600
 
-# 查询缓存 (MySQL 5.7及以下)
-query_cache_type = 1
-query_cache_size = 32M
-query_cache_limit = 2M
-
 # 表缓存
-table_open_cache = 400
-table_definition_cache = 400
+table_open_cache = 200
+table_definition_cache = 200
 
 # 临时表设置
-tmp_table_size = 32M
-max_heap_table_size = 32M
-
-# MyISAM设置
-key_buffer_size = 32M
-myisam_sort_buffer_size = 8M
+tmp_table_size = 16M
+max_heap_table_size = 16M
 
 # InnoDB设置
 innodb_file_per_table = 1
-innodb_flush_log_at_trx_commit = 2  # 性能优化，可接受的数据丢失风险
+innodb_flush_log_at_trx_commit = 2
 innodb_log_buffer_size = 8M
-innodb_log_file_size = 64M
-innodb_log_files_in_group = 2
+innodb_redo_log_capacity = 128M
 innodb_flush_method = O_DIRECT
 innodb_lock_wait_timeout = 50
 
 # 排序和分组缓冲区
-sort_buffer_size = 2M
-read_buffer_size = 1M
-read_rnd_buffer_size = 2M
-join_buffer_size = 2M
+sort_buffer_size = 1M
+read_buffer_size = 512K
+read_rnd_buffer_size = 1M
+join_buffer_size = 1M
 
 # 线程设置
 thread_cache_size = 8
 thread_stack = 256K
 
-# 慢查询日志
-slow_query_log = 1
-slow_query_log_file = /var/log/mysql/slow.log
-long_query_time = 2
-
-# 错误日志
-log_error = /var/log/mysql/error.log
-
-# 二进制日志 (如果需要复制)
-# log_bin = /var/log/mysql/mysql-bin.log
-# binlog_format = ROW
-# expire_logs_days = 7
-
 # 安全设置
 sql_mode = STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO
+
+# 跳过域名解析加速连接
+skip-name-resolve
 
 [mysql]
 default-character-set = utf8mb4
@@ -84,11 +63,3 @@ default-character-set = utf8mb4
 default-character-set = utf8mb4
 port = 3306
 socket = /var/run/mysqld/mysqld.sock
-
-[mysqldump]
-quick
-quote-names
-max_allowed_packet = 16M
-
-[isamchk]
-key_buffer_size = 16M
