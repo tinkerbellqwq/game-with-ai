@@ -39,8 +39,12 @@ target_metadata = Base.metadata
 
 
 def get_url():
-    """Get database URL from settings"""
-    return settings.DATABASE_URL
+    """Get database URL from settings, converting async driver to sync for Alembic"""
+    url = settings.DATABASE_URL
+    # Alembic needs synchronous driver, convert aiomysql to pymysql
+    if "aiomysql" in url:
+        url = url.replace("aiomysql", "pymysql")
+    return url
 
 
 def run_migrations_offline() -> None:
