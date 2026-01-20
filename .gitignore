@@ -75,7 +75,14 @@ tmpclaude-*
 temp_log.txt
 
 # Claude Code
-.claude/projects/
+.claude/
 
 # MCP config (contains API tokens)
 .mcp.json
+
+# Local docs (keep local only)
+CLAUDE.md
+UI.md
+DEPLOY.md
+api.md
+LEADERBOARD_IMPLEMENTATION_SUMMARY.md
