@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { getRoomDetail, joinRoom, leaveRoom, type RoomDetail } from '@/api/rooms'
+import { getRoomDetail, leaveRoom, type RoomDetail } from '@/api/rooms'
 import {
   createGame,
   startGame,
@@ -11,8 +11,7 @@ import {
   submitVote,
   getSpeeches,
   type GameState,
-  type Speech,
-  type GamePlayer
+  type Speech
 } from '@/api/games'
 import GameNotification, { type GameNotificationData } from '@/components/GameNotification.vue'
 import GameProgress from '@/components/GameProgress.vue'
@@ -532,10 +531,10 @@ const handleSpeech = async () => {
   }
 }
 
-const handleVote = async (targetId: string) => {
+const handleVote = async (targetId: string | number) => {
   if (!gameState.value?.id) return
   try {
-    await submitVote(gameState.value.id as any, targetId as any)
+    await submitVote(gameState.value.id, String(targetId))
     await fetchGameState()
   } catch {
     // 投票失败
@@ -863,7 +862,7 @@ onUnmounted(() => {
                 <span
                   :class="[
                     'material-symbols-outlined text-6xl mb-4',
-                    gameState.winner_role === 'undercover' ? 'text-red-500' : 'text-green-500'
+                    gameState?.winner_role === 'undercover' ? 'text-red-500' : 'text-green-500'
                   ]"
                 >
                   emoji_events
@@ -872,10 +871,10 @@ onUnmounted(() => {
                 <p
                   :class="[
                     'text-xl font-bold px-6 py-2 rounded-full inline-block',
-                    gameState.winner_role === 'undercover' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+                    gameState?.winner_role === 'undercover' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
                   ]"
                 >
-                  {{ gameState.winner_role === 'undercover' ? '卧底获胜！' : '平民获胜！' }}
+                  {{ gameState?.winner_role === 'undercover' ? '卧底获胜！' : '平民获胜！' }}
                 </p>
               </div>
 
@@ -884,7 +883,7 @@ onUnmounted(() => {
                 <h4 class="text-sm font-bold text-text-muted uppercase mb-4 text-center">身份揭晓</h4>
                 <div class="grid grid-cols-2 gap-3">
                   <div
-                    v-for="player in gameState.players"
+                    v-for="player in gameState?.players"
                     :key="player.id"
                     :class="[
                       'p-3 rounded-xl border-2 flex items-center gap-3',

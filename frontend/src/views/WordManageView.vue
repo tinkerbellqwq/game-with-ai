@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
 import {
   getWordPairs,
   getWordPairStats,
@@ -17,7 +16,6 @@ import {
 } from '@/api/words'
 
 const router = useRouter()
-const userStore = useUserStore()
 
 // 状态
 const wordPairs = ref<WordPair[]>([])
@@ -77,9 +75,6 @@ const getDifficultyClass = (difficulty: number) => {
 const getDifficultyLabel = (difficulty: number) => {
   return `难度 ${difficulty}`
 }
-
-// 检查是否是 admin 用户
-const isAdmin = computed(() => userStore.user?.username === 'admin')
 
 // 管理员登录
 const handleAdminLogin = async () => {

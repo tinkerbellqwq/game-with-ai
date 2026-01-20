@@ -6,6 +6,8 @@ export interface GamePlayer {
   is_ai: boolean
   is_alive: boolean
   is_ready: boolean
+  role?: 'civilian' | 'undercover'
+  word?: string
 }
 
 export interface VoteInfo {
@@ -89,7 +91,7 @@ export const submitSpeech = (gameId: number, content: string) => {
 }
 
 // 提交投票
-export const submitVote = (gameId: number, targetId: number) => {
+export const submitVote = (gameId: string, targetId: string) => {
   return api.post(`/games/${gameId}/vote`, { target_id: targetId })
 }
 
