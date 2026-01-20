@@ -125,12 +125,15 @@ start_services() {
     echo -e "${YELLOW}启动服务...${NC}"
     cd "$INSTALL_DIR"
 
-    set -a
-    source .env.prod
-    set +a
+    # 检查 .env.prod 是否存在
+    if [ ! -f .env.prod ]; then
+        echo -e "${RED}✘ 错误: .env.prod 文件不存在${NC}"
+        echo "请先运行 install 命令创建配置文件"
+        exit 1
+    fi
 
-    docker compose -f docker-compose.prod.yml down 2>/dev/null || true
-    docker compose -f docker-compose.prod.yml up -d --build
+    docker compose -f docker-compose.prod.yml --env-file .env.prod down 2>/dev/null || true
+    docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
 
     echo -e "${GREEN}✓ 服务已启动${NC}"
 }
@@ -140,8 +143,8 @@ init_database() {
     sleep 30
 
     cd "$INSTALL_DIR"
-    docker compose -f docker-compose.prod.yml exec -T app alembic upgrade head
-    docker compose -f docker-compose.prod.yml exec -T app python -m scripts.init_word_pairs 2>/dev/null || true
+    docker compose -f docker-compose.prod.yml --env-file .env.prod exec -T app alembic upgrade head
+    docker compose -f docker-compose.prod.yml --env-file .env.prod exec -T app python -m scripts.init_word_pairs 2>/dev/null || true
 
     echo -e "${GREEN}✓ 数据库初始化完成${NC}"
 }
@@ -149,7 +152,7 @@ init_database() {
 run_migrations() {
     echo -e "${YELLOW}运行数据库迁移...${NC}"
     cd "$INSTALL_DIR"
-    docker compose -f docker-compose.prod.yml exec -T app alembic upgrade head
+    docker compose -f docker-compose.prod.yml --env-file .env.prod exec -T app alembic upgrade head
     echo -e "${GREEN}✓ 迁移完成${NC}"
 }
 
@@ -157,7 +160,7 @@ show_status() {
     cd "$INSTALL_DIR"
     echo ""
     echo "=========================================="
-    docker compose -f docker-compose.prod.yml ps
+    docker compose -f docker-compose.prod.yml --env-file .env.prod ps
     echo "=========================================="
 
     SERVER_IP=$(curl -s ifconfig.me 2>/dev/null || hostname -I | awk '{print $1}')
@@ -165,8 +168,8 @@ show_status() {
     echo -e "${GREEN}访问地址: http://${SERVER_IP}${NC}"
     echo ""
     echo "常用命令:"
-    echo "  查看日志:  cd $INSTALL_DIR && docker compose -f docker-compose.prod.yml logs -f"
-    echo "  重启服务:  cd $INSTALL_DIR && docker compose -f docker-compose.prod.yml restart"
+    echo "  查看日志:  cd $INSTALL_DIR && docker compose -f docker-compose.prod.yml --env-file .env.prod logs -f"
+    echo "  重启服务:  cd $INSTALL_DIR && docker compose -f docker-compose.prod.yml --env-file .env.prod restart"
     echo "  更新部署:  sudo $INSTALL_DIR/scripts/server-deploy.sh update"
 }
 
