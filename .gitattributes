@@ -1,0 +1,14 @@
+# Ensure shell scripts always use LF line endings
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Other text files (auto detection)
+* text=auto
+
+# Explicitly declare binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
