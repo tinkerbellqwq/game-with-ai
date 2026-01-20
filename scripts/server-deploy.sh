@@ -82,23 +82,41 @@ setup_env() {
         DB_ROOT_PASSWORD=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9')
         SECRET_KEY=$(openssl rand -base64 32)
 
-        cat > .env.prod << EOF
-# === 数据库配置 (自动生成) ===
-DB_PASSWORD=${DB_PASSWORD}
-DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+        cat > .env.prod << 'ENVEOF'
+# ============================================
+# 谁是卧底游戏平台 - 生产环境配置
+# ============================================
 
-# === 应用密钥 (自动生成) ===
-SECRET_KEY=${SECRET_KEY}
+# === 数据库配置 (自动生成，请勿修改) ===
+ENVEOF
+        echo "DB_PASSWORD=${DB_PASSWORD}" >> .env.prod
+        echo "DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}" >> .env.prod
+        echo "" >> .env.prod
+        echo "# === 应用密钥 (自动生成，请勿修改) ===" >> .env.prod
+        echo "SECRET_KEY=${SECRET_KEY}" >> .env.prod
+        cat >> .env.prod << 'ENVEOF'
 
-# === API 配置 (请手动填写) ===
+# === AI API 配置 (请手动填写) ===
 # OpenAI 或兼容 API
-OPENAI_API_KEY=your_api_key_here
+OPENAI_API_KEY=
 OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_MODEL=gpt-3.5-turbo
+OPENAI_MAX_TOKENS=150
+OPENAI_TEMPERATURE=0.7
 
 # OpenRouter (可选，用于多模型支持)
-OPENROUTER_API_KEY=your_openrouter_key_here
+OPENROUTER_API_KEY=
 OPENROUTER_API_BASE=https://openrouter.ai/api/v1
-EOF
+
+# 可用 AI 模型列表 (逗号分隔)
+AI_AVAILABLE_MODELS=gpt-3.5-turbo,gpt-4
+
+# === 性能配置 (2C2G 优化，可按需调整) ===
+DB_POOL_SIZE=5
+DB_MAX_OVERFLOW=3
+REDIS_MAX_CONNECTIONS=5
+LOG_LEVEL=INFO
+ENVEOF
 
         echo -e "${GREEN}✓ .env.prod 已创建${NC}"
         echo ""

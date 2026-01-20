@@ -29,14 +29,28 @@ services:
     expose:
       - "8000"
     environment:
+      # Core settings
       - ENVIRONMENT=production
+      - DEBUG=false
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      # Database
       - DATABASE_URL=mysql+aiomysql://app:${DB_PASSWORD}@mysql:3306/undercover_game
+      - DB_POOL_SIZE=${DB_POOL_SIZE:-5}
+      - DB_MAX_OVERFLOW=${DB_MAX_OVERFLOW:-3}
+      # Redis
       - REDIS_URL=redis://redis:6379/0
+      - REDIS_MAX_CONNECTIONS=${REDIS_MAX_CONNECTIONS:-5}
+      # Security
       - SECRET_KEY=${SECRET_KEY}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.openai.com/v1}
-      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      # AI API
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-3.5-turbo}
+      - OPENAI_MAX_TOKENS=${OPENAI_MAX_TOKENS:-150}
+      - OPENAI_TEMPERATURE=${OPENAI_TEMPERATURE:-0.7}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
       - OPENROUTER_API_BASE=${OPENROUTER_API_BASE:-https://openrouter.ai/api/v1}
+      - AI_AVAILABLE_MODELS=${AI_AVAILABLE_MODELS:-}
     depends_on:
       mysql:
         condition: service_healthy
