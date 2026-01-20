@@ -203,18 +203,18 @@ engine = None
 AsyncSessionLocal = None
 
 async def init_db():
-    """Initialize database connection and create tables if needed"""
+    """Initialize database connection (tables created by alembic migrations)"""
     try:
         await db_manager.initialize()
-        
-        async with db_manager.get_session() as session:
-            # Import all models to ensure they are registered
-            from app.models import user, room, game, word_pair  # noqa
-            
-            # Create all tables
-            async with db_manager.engine.begin() as conn:
-                await conn.run_sync(Base.metadata.create_all)
-            
+
+        # Import all models to ensure they are registered
+        from app.models import user, room, game, word_pair  # noqa
+
+        # Note: Tables are created by alembic migrations, not here
+        # Only use create_all in development if needed:
+        # async with db_manager.engine.begin() as conn:
+        #     await conn.run_sync(Base.metadata.create_all)
+
         logger.info("Database initialized successfully")
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")
