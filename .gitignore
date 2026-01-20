@@ -76,3 +76,6 @@ temp_log.txt
 
 # Claude Code
 .claude/projects/
+
+# MCP config (contains API tokens)
+.mcp.json
